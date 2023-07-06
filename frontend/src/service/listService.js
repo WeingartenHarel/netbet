@@ -1,9 +1,9 @@
 import HttpService from './HttpService'
 
 export default {
-  loadUsers,
+  loadList,
 }
 
-function loadUsers() {
-  return HttpService.get(`list`)
+function loadList(page) {
+  return HttpService.get(`list?page=${page}`)
 }

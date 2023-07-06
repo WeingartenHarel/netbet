@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import Timer from '../Timer/Timer'
 
-const Card = ({ jackpot, drawTime, logo, lotteryName, result, links }) => {
+const Card = ({ jackpot, drawTime,drawDateTime, logo, lotteryName, result, links }) => {
     const [flipped, setFlipped] = useState(false);
 
     const handleFlip = () => {
@@ -15,7 +16,7 @@ const Card = ({ jackpot, drawTime, logo, lotteryName, result, links }) => {
                     <p>{lotteryName}</p>
                 </div>
                 <h3>Jackpot: {jackpot}</h3>
-                <p>Draw Time: {drawTime}</p>
+                <Timer drawTime={drawTime}/>
                 <button className='button-result' onClick={() => handleFlip()}>Result</button>
             </div>
                 : <div className={`card-side result-side ${flipped ? 'flipped' : ''}`}>

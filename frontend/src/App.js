@@ -1,50 +1,58 @@
-import logo from './logo.svg';
 import './App.css';
 import LotteryCardList from './cmps/LotteryCardList/LotteryCardList'
-import { useEffect } from 'react';
-import listService from './service/listService';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadCards } from './store/actions/cardActions';
+import Timer from './cmps/Timer/Timer'
 
 function App() {
-  const [dataList, setDataList] = useState(null)
+  const dispatch = useDispatch()
   const [filteredDataList, setFilteredDataList] = useState([]);
   const [filter, setFilter] = useState('');
+  const dataList = useSelector((state) => state.cardReducer.cards)
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     // declare the async data fetching function
     const fetchData = async () => {
       // get the data from the api
-      const data = await listService.loadUsers()
-      setDataList(data)
+      dispatch(loadCards(page))
     }
 
     // call the function
     fetchData()
       // make sure to catch any error
       .catch(console.error);;
-  }, [])
-
-  useEffect(() => {
-    console.log('filteredDataList', filteredDataList)
-  }, [filteredDataList])
+  }, [page])
 
   useEffect(() => {
     if (!dataList) return
     handleFilter()
-  }, [dataList,filter])
+  }, [dataList, filter])
 
 
   const handleFilter = () => {
-    console.log('handleFilter', filter.length)
     if (filter.length > 0) {
       const filtered = dataList.filter((item) =>
-        item.lotteryName.toLowerCase().includes(filter.toLowerCase())
+        item.lotteryName.toLowerCase().includes(filter.toLowerCase()) ||
+        item.jackpot.toLowerCase().includes(filter.toLowerCase()) ||
+        item.drawTime.toLowerCase().includes(filter.toLowerCase())
       );
       setFilteredDataList(filtered);
-    }else if(filter.length === 0){
+    } else if (filter.length === 0) {
       setFilteredDataList(dataList);
     }
   };
+
+  const handleNext = () => {
+    if (page * 4 === dataList.length + 1) return
+    setPage(page + 1)
+  }
+
+  const handlePrev = () => {
+    if (page === 1) return
+    setPage(page - 1)
+  }
 
   return (
     <div className="App">
@@ -57,6 +65,10 @@ function App() {
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filter by lottery name" />
           <label>Filter:</label>
+        </div>
+        <div className='pagination'>
+          <button className='pagination-button' onClick={handlePrev}>Prev</button>
+          <button className='pagination-button' onClick={handleNext}>Next</button>
         </div>
         {filteredDataList && <LotteryCardList data={filteredDataList} />}
       </header>

@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
 }
        
 const listRoutes = require('./api/list/list.routes')
-      
+        
 app.use('/api/list', listRoutes)
 
 app.get('/**', (req, res) => {
